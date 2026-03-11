@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 # 导入我们开发的核心模块
 from llm.code_analyzer import analyze_code
 from rag.vector_db import similarity_search
+from rag.qa_chain import rag_qa_chain  # Day3 新增：导入问答链
 
 # 加载环境变量
 load_dotenv()
@@ -17,10 +18,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 配置CORS跨域中间件，解决前后端联调的跨域问题，部署后也能正常访问
+# 配置CORS跨域中间件，解决前后端联调的跨域问题
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 允许所有来源，开发和部署都方便，复试项目足够用
+    allow_origins=["*"],  # 允许所有来源，开发和部署都方便
     allow_credentials=True,
     allow_methods=["*"],  # 允许所有HTTP方法
     allow_headers=["*"],  # 允许所有请求头
@@ -34,6 +35,11 @@ class CodeAnalyzeRequest(BaseModel):
 class RagRetrieveRequest(BaseModel):
     question: str
     top_k: int = 10
+
+# 新增：智能问答接口的请求体模型
+class RagQARequest(BaseModel):
+    question: str
+    code_context: str = ""
 
 # 健康检查接口：用来测试后端服务是否正常启动
 @app.get("/", tags=["健康检查"])
@@ -75,6 +81,22 @@ async def rag_retrieve(request: RagRetrieveRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"检索失败：{str(e)}")
+
+# Day3 新增：RAG智能问答接口，核心接口3，实现端到端的答疑功能
+@app.post("/api/rag-qa", tags=["核心功能接口"])
+async def rag_qa(request: RagQARequest):
+    if not request.question.strip():
+        raise HTTPException(status_code=400, detail="问题不能为空")
+    try:
+        # 调用问答链
+        result = rag_qa_chain(request.question, request.code_context)
+        return {
+            "code": 200,
+            "message": "问答生成成功",
+            "data": result
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"问答生成失败：{str(e)}")
 
 # 启动后端服务
 if __name__ == "__main__":
