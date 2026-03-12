@@ -1,0 +1,11 @@
+{
+  "build": {
+    "builder": "nixpacks",
+    "buildCommand": "pip install --upgrade pip && pip install -r requirements.txt"
+  },
+  "deploy": {
+    "startCommand": "cd backend && python main.py",
+    "healthcheckPath": "/",
+    "healthcheckPort": 8000
+  }
+}
