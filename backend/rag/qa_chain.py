@@ -88,9 +88,13 @@ def rag_qa_chain(user_question: str, code_context: str = "", top_k_retrieve: int
 # 本地测试用
 if __name__ == "__main__":
     # 测试问答功能
-    test_question = "Python的列表和元组有什么区别？"
+    test_question = "java 中常用数据类型"
     result = rag_qa_chain(test_question)
     print("生成的答案：")
     print(result["answer"])
     print("\n引用的内容：")
     print(result["reference"])
+    print("\n粗召回到的内容：")
+    print(result["retrieve_docs"])
+    print("\n精排后的内容：")
+    print(result["reranked_docs"])

@@ -20,6 +20,7 @@ def split_markdown_documents(file_dir: str = "../data/raw_docs"):
     )
     # 二次分块，控制单块的长度，避免块太大丢失精度
     text_splitter = RecursiveCharacterTextSplitter(
+        ## 单个文本块的最大字符数，设置为 500 以适配 Embedding 模型的输入长度限制
         chunk_size=500,
         chunk_overlap=100,
         separators=["\n\n", "\n", "。", " ", ""]

@@ -32,9 +32,16 @@ standard_keywords = {
 
 def calculate_hit_rate(docs, keywords):
     """计算检索结果的命中率，只要有一个文档包含所有关键词，就算命中"""
+    idx =0
     for doc in docs:
         content = doc["content"].lower()
         all_keywords_hit = all(keyword.lower() in content for keyword in keywords)
+        print(f"粗召回内容{idx+1},{content}")
+        print(f"关键词{idx+1},{keywords[idx]}")
+        print(f"命中结果{idx+1},{all_keywords_hit}")
+        idx += 1
+        if not all_keywords_hit:
+            continue
         if all_keywords_hit:
             return True
     return False
