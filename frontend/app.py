@@ -49,7 +49,7 @@ with col_code:
 # 右侧：结果展示区
 with col_result:
     st.subheader("📊 分析结果")
-    analyze_result_box = st.container(height=350, border=True)
+    analyze_result_box = st.container(height=440, border=True)
     # 初始提示
     with analyze_result_box:
         st.info("请输入代码，点击「开始分析代码」查看结果")
@@ -104,11 +104,11 @@ if "code_context" not in st.session_state:
 
 # 代码上下文展示与编辑
 with st.expander("📎 代码上下文（可选，会和问题一起传给AI）", expanded=False):
-    st.session_state["code_context"] = st.text_area(
+    # 【修复核心】只用key绑定session_state，不混用value参数，状态自动同步
+    st.text_area(
         "相关代码上下文",
-        value=st.session_state["code_context"],
         height=150,
-        key="qa_code_context"
+        key="code_context"  # 和上方赋值的key完全统一，保证联动
     )
 
 # 展示历史对话
