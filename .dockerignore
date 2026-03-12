@@ -1,23 +1,5 @@
-# 只排除100%无用的文件，核心配置完全不碰
-**/__pycache__/
-**/*.pyc
-**/*.pyo
-**/*.pyd
-venv/
-*.venv
-.env
-.DS_Store
-*.log
-.vscode/
-.idea/
-
-# 只排除后端data目录里的大文件，不碰根目录的配置
-backend/data/
-*.pdf
-*.md
-
-# 排除前端代码（后端部署不需要）
-frontend/
-
-# 排除Git历史
-.git/
+# 默认排除所有文件
+**/*
+# 只允许构建必须的文件进入上下文
+!requirements.txt
+!backend/**
