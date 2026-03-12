@@ -1,5 +1,12 @@
-# 默认排除所有文件
+# 先全局排除所有文件，只放行必须的内容
 **/*
-# 只允许构建必须的文件进入上下文
+
+# 只允许构建必须的2个核心内容
 !requirements.txt
-!backend/**
+!backend/
+
+# 强制排除backend里的大体积数据目录（核心！）
+backend/data/
+backend/*.pdf
+backend/*.md
+backend/*.txt
