@@ -1,27 +1,23 @@
-# 固定和本地一致的精简Python镜像
+# 固定Python基础镜像
 FROM python:3.10-slim
 
-# 关闭Python缓冲，让日志正常输出到Railway控制台
+# 基础环境配置
 ENV PYTHONUNBUFFERED=1
-# 配置清华镜像源，大幅加快依赖安装速度
 ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
 ENV PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn
 
-# 设置容器内的工作目录
+# 设置工作目录
 WORKDIR /app
 
-# 明确复制根目录的依赖文件
-COPY ./requirements.txt /app/requirements.txt
+# 先把当前目录所有文件复制到容器的/app里（.dockerignore会自动排除没用的）
+COPY . .
 
-# 安装项目依赖
+# 安装依赖
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# 复制后端核心代码
-COPY ./backend /app/backend
-
-# 暴露后端服务端口
+# 暴露端口
 EXPOSE 8000
 
-# 容器启动命令
+# 启动服务
 CMD ["python", "backend/main.py"]

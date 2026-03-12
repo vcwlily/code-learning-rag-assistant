@@ -1,4 +1,4 @@
-# 彻底排除所有缓存、环境文件
+# 只排除100%不需要的文件，核心代码和配置完全不碰
 **/__pycache__/
 **/*.pyc
 **/*.pyo
@@ -11,19 +11,14 @@ venv/
 .vscode/
 .idea/
 
-# 核心：排除所有数据文件、向量库、源文档
+# 只排除大体积的非代码文件
 backend/data/
 *.pdf
 *.md
 *.txt
 
-# 后端部署完全不需要前端代码，直接排除
+# 排除前端代码（后端部署完全不需要）
 frontend/
 
-# 排除构建配置和Git历史
+# 排除Git历史文件
 .git/
-.gitignore
-.dockerignore
-Dockerfile
-railway.json
-README.md
