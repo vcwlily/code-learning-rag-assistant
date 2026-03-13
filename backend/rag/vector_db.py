@@ -3,11 +3,13 @@ from chromadb import PersistentClient
 from dotenv import load_dotenv
 import os
 
-# 加载环境变量
-load_dotenv()
-CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "../data/chroma_db")
-COLLECTION_NAME = "code_learning_knowledge_base"
+# 兼容本地和部署环境的路径，优先加载项目根目录的.env文件
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(project_root, ".env"))
 
+# 向量库路径兼容
+CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", os.path.join(project_root, "data", "chroma_db"))
+COLLECTION_NAME = "code_learning_knowledge_base"
 # 初始化Embedding模型，用和之前完全一样的bge-small-zh，效果完全一致
 def get_embedding_model():
     return TextEmbedding(model_name="BAAI/bge-small-zh-v1.5")
