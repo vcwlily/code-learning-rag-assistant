@@ -1,37 +1,47 @@
-# 第一阶段：构建阶段，只负责安装依赖
-FROM python:3.10-slim AS builder
-
-# 关闭pip缓存，减少体积
-ENV PIP_NO_CACHE_DIR=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-
-# 设置构建目录
-WORKDIR /build
-
-# 复制依赖文件，安装依赖到虚拟环境
-COPY requirements.txt .
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install -r requirements.txt
-
-# 第二阶段：运行阶段，只保留运行必须的文件，极致精简
-FROM python:3.10-slim
-
-# 运行时环境配置
-ENV PYTHONUNBUFFERED=1
-ENV PATH="/opt/venv/bin:$PATH"
+# ===============================前后端在huggingface 上同一个空间中部署所需要的配置=============================================
+# 用Python 3.10作为基础镜像，和你本地环境保持一致
+# FROM python:3.10-slim
 
 # 设置工作目录
-WORKDIR /app
+# WORKDIR /app
 
-# 从构建阶段复制已经装好的依赖，不用重复安装
-COPY --from=builder /opt/venv /opt/venv
+# 安装系统依赖（如果需要）
+# RUN apt-get update && apt-get install -y \
+#     gcc \
+#     && rm -rf /var/lib/apt/lists/*
 
-# 只复制后端核心代码，完全不碰数据文件
-COPY backend/ ./backend/
+# 复制依赖文件并安装
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 暴露服务端口
-EXPOSE 8000
+# 复制所有代码
+# COPY . .
 
-# 启动服务
-CMD ["python", "backend/main.py"]
+# 暴露端口（Streamlit用8501，FastAPI用7860，Hugging Face默认会路由7860）
+# EXPOSE 7860
+# EXPOSE 8501
+
+# 分步启动FastAPI后端和Streamlit前端
+# CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port 7860 & cd frontend && streamlit run app.py --server.port 8501 --server.address 0.0.0.0"]
+
+# ================================end============================================
+
+# =================================前后端分别部署在huggingface 上的不同空间位置配置之后端配置=============================================
+# 官方Python镜像，和你本地开发版本保持一致，推荐3.10/3.11
+FROM python:3.10-slim
+
+# 设置容器工作目录
+WORKDIR /code
+
+# 先复制依赖文件，安装依赖（优化镜像构建缓存）
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制整个项目代码到容器
+COPY . .
+
+# 暴露端口（Hugging Face强制要求7860端口，必须和main.py里的端口一致）
+EXPOSE 7860
+
+# 启动命令：运行FastAPI服务，路径和你的项目结构完全匹配
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "7860"]

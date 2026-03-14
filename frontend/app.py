@@ -8,8 +8,11 @@ st.set_page_config(
     layout="wide"
 )
 
-# 后端接口地址，本地开发用这个，部署后替换成线上地址
-BACKEND_BASE_URL = "http://127.0.0.1:8000"
+# 后端接口地址，本地开发用这个地址
+BACKEND_BASE_URL = "http://127.0.0.1:7860"
+
+# 后端接口地址，线上地址
+#BACKEND_BASE_URL = "https://vcwlily-code-rag-assistant.hf.space"
 
 # 页面标题
 st.title("💻 代码学习智能审查助手")
@@ -27,7 +30,7 @@ with col_code:
     # 编程语言选择下拉框
     language = st.selectbox(
         "选择代码对应的编程语言",
-        options=["Python", "Java", "C++", "JavaScript", "Go"],
+        options=["Python", "Java", "C++", "JavaScript", "Go","rust"],
         index=0,
         key="code_language"
     )

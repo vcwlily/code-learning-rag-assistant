@@ -1,3 +1,9 @@
+# ========== 【新增】修复模块路径问题，必须放在文件最开头 ==========
+import sys
+import os
+# 把当前main.py所在的backend目录，加入Python的模块搜索路径
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# ==============================================================
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -103,6 +109,6 @@ if __name__ == "__main__":
     import uvicorn
     # 从环境变量读取配置，默认0.0.0.0:8000
     import os
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", 7860))
     uvicorn.run(app, host=host, port=port)

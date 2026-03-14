@@ -12,7 +12,7 @@ langchain-huggingface==0.1.0
 python-multipart==0.0.12
 python-dotenv==1.0.1
 # 前端框架
-streamlit==1.38.0
+#streamlit==1.38.0
 # 网络请求
 requests==2.32.3
 # 重排序优化（复试核心亮点）
